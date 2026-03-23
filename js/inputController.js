@@ -39,15 +39,15 @@ class InputController {
             this._enabled = true;
         }
 
-        this._target.addEventListener("keydown", this._onKeyDown);
-        this._target.addEventListener("keyup", this._onKeyUp);
+        this._target.addEventListener("keydown", this._onKeyDown.bind(this));
+        this._target.addEventListener("keyup", this._onKeyUp.bind(this));
 
         this._addFocusEvents();
     }
 
     detach() {
-        this._target.removeEventListener("keydown", this._onKeyDown);
-        this._target.removeEventListener("keyup", this._onKeyUp);
+        this._target.removeEventListener("keydown", this._onKeyDown.bind(this));
+        this._target.removeEventListener("keyup", this._onKeyUp.bind(this));
 
         this._removeFocusEvents();
         this._target = null;
@@ -171,15 +171,12 @@ class InputController {
             this._keys_active.clear();
             this._actions_active.clear();
         });
+
     }
 
     _addKeyEvents(){
-        window.addEventListener("keydown", (e) => {
-            this._onKeyDown(e);
-        });
-        window.addEventListener("keyup", (e) => {
-            this._onKeyUp(e);
-        });
+        window.addEventListener("keydown", this._onKeyDown.bind(this));
+        window.addEventListener("keyup", this._onKeyUp.bind(this));
     }
 
 
