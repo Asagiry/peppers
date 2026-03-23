@@ -15,12 +15,12 @@ class InputController {
             this.attach(target);
         }
 
-        this.bindEvents();
+        this._bindEvents();
     }
 
     bindActions(actionsToBind) {
         for (const action of actionsToBind) {
-            this._actions.set(action.name,{keys: new Set(action.keys), enabled: action.enabled});
+            this._actions.set(action.name, { keys: new Set(action.keys), enabled: action.enabled });
         }
     }
 
@@ -34,7 +34,7 @@ class InputController {
 
     attach(target, dontEnable = true) {
         this._target = target;
-        if(dontEnable == false){
+        if (dontEnable == false) {
             this._enabled = true;
         }
     }
@@ -63,12 +63,26 @@ class InputController {
     }
 
 
-    bindEvents() {
+    _bindEvents() {
         window.addEventListener("keydown", (e) => {
             this._keys_active.set(e.code, true);
+            if (this._target) {
+               for (const action of this._actions.values()){
+                   if (action.keys.has(e.code) && action.enabled){
+                       this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, { detail: action.name }));
+                   }
+               }
+            }
         });
         window.addEventListener("keyup", (e) => {
             this._keys_active.set(e.code, false);
+            if (this._target) {
+                for (const action of this._actions.values()){
+                   if (action.keys.has(e.code) && action.enabled){
+                       this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, { detail: action.name }));
+                   }
+               }
+            }
         });
     }
 
