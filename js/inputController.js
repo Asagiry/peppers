@@ -6,6 +6,7 @@ class InputController {
     _focused = true;
     _keys_active = new Map();
     _actions = new Map();
+    _last_dispatched = new Map();
 
     constructor(actionsToBind = [], target = null) {
         if (actionsToBind) {
@@ -20,7 +21,7 @@ class InputController {
 
     bindActions(actionsToBind) {
         for (const action of actionsToBind) {
-            this._actions.set(action.name, { keys: new Set(action.keys), enabled: action.enabled });
+            this._actions.set(action.name, { keys: new Set(action.keys), enabled: action.enabled, name: action.name});
         }
     }
 
@@ -75,11 +76,19 @@ class InputController {
     }
 
     _addKeyEvents(){
-        window.addEventListener("keydown", (e) => {
+        this._addKeyDown();
+        this._addKeyUp();
+    }
+
+    _addKeyDown(){
+        this._target.addEventListener("keydown", (e) => {
             this._keys_active.set(e.code, true);
             this._addActionActivated(e);
         });
-        window.addEventListener("keyup", (e) => {
+    }
+
+    _addKeyUp(){
+        this._target.addEventListener("keyup", (e) => {
             this._keys_active.set(e.code, false);
             this._addActionDeactivated(e);
         });
@@ -87,9 +96,16 @@ class InputController {
 
     _addActionActivated(e){
         if (this._target) {
-            for (const action of this._actions.values()){
-                if (action.keys.has(e.code) && action.enabled){
+            for (const action of this._actions.values())
+            {
+                if (action.keys.has(e.code) && action.enabled)
+                {
+                    if(this._last_dispatched.get(action.name)==true)
+                        continue
+
                     this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, { detail: action.name }));
+                    this._last_dispatched.set(action.name, true);
+                    console.log("action activated", action.name);
                 }
             }
         }
@@ -98,8 +114,14 @@ class InputController {
     _addActionDeactivated(e){
         if (this._target) {
             for (const action of this._actions.values()){
-                if (action.keys.has(e.code) && action.enabled){
+                if (action.keys.has(e.code) && action.enabled)
+                {
+                    if(this._last_dispatched.get(action.name)==false)
+                        continue
+
                     this._target.dispatchEvent(new CustomEvent(InputController.ACTION_DEACTIVATED, { detail: action.name }));
+                    this._last_dispatched.set(action.name, false);
+                    console.log("action deactivated", action.name);
                 }
             }
         }
