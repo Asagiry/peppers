@@ -66,24 +66,32 @@ class InputController {
     _bindEvents() {
         window.addEventListener("keydown", (e) => {
             this._keys_active.set(e.code, true);
-            if (this._target) {
-               for (const action of this._actions.values()){
-                   if (action.keys.has(e.code) && action.enabled){
-                       this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, { detail: action.name }));
-                   }
-               }
-            }
+            this._activeCallback(e);
         });
         window.addEventListener("keyup", (e) => {
             this._keys_active.set(e.code, false);
-            if (this._target) {
-                for (const action of this._actions.values()){
-                   if (action.keys.has(e.code) && action.enabled){
-                       this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, { detail: action.name }));
-                   }
-               }
-            }
+            this._deactiveCallback(e);
         });
+    }
+
+    _activeCallback(e){
+        if (this._target) {
+            for (const action of this._actions.values()){
+                if (action.keys.has(e.code) && action.enabled){
+                    this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, { detail: action.name }));
+                }
+            }
+        }
+    }
+
+    _deactiveCallback(e){
+        if (this._target) {
+            for (const action of this._actions.values()){
+                if (action.keys.has(e.code) && action.enabled){
+                    this._target.dispatchEvent(new CustomEvent(InputController.ACTION_DEACTIVATED, { detail: action.name }));
+                }
+            }
+        }
     }
 
 
