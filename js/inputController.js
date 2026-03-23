@@ -5,8 +5,8 @@ class InputController {
     _enabled = false;
     _focused = true;
     _keys_active = new Map();
+    _actions_active = new Map();
     _actions = new Map();
-    _last_dispatched = new Map();
 
     constructor(actionsToBind = [], target = null) {
         if (actionsToBind) {
@@ -38,10 +38,23 @@ class InputController {
         if (dontEnable == false) {
             this._enabled = true;
         }
+
+        this.addListeners();
+    }
+
+    addListeners(){
+        this._target.addEventListener("keydown", this.onKeyDown);
+        this._target.addEventListener("keyup", this.onKeyUp);
     }
 
     detach() {
+        this.removeListeners();
         this._target = null;
+    }
+
+    removeListeners(){
+        this._target.removeEventListener("keydown", this.onKeyDown);
+        this._target.removeEventListener("keyup", this.onKeyUp);
     }
 
     isActionActive(actionName) {
@@ -81,15 +94,29 @@ class InputController {
     }
 
     _addKeyDown(){
-        this._target.addEventListener("keydown", (e) => {
+        window.addEventListener("keydown", (e) => {
             this._keys_active.set(e.code, true);
+
+            let actionName = this._getActionName(e.code);
+            if (this._actions_active.get(actionName)){
+                this._actions_active.set(actionName, this._actions_active.get(actionName) + 1);
+            } else {
+                this._actions_active.set(actionName, 1);
+            }
+
             this._addActionActivated(e);
         });
     }
 
     _addKeyUp(){
-        this._target.addEventListener("keyup", (e) => {
+        window.addEventListener("keyup", (e) => {
             this._keys_active.set(e.code, false);
+
+            let actionName = this._getActionName(e.code);
+            if (this._actions_active.get(actionName)){
+                this._actions_active.set(actionName, this._actions_active.get(actionName) - 1);
+            }
+
             this._addActionDeactivated(e);
         });
     }
@@ -100,12 +127,10 @@ class InputController {
             {
                 if (action.keys.has(e.code) && action.enabled)
                 {
-                    if(this._last_dispatched.get(action.name)==true)
-                        continue
-
-                    this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, { detail: action.name }));
-                    this._last_dispatched.set(action.name, true);
-                    console.log("action activated", action.name);
+                    if (this._actions_active.get(action.name) == 1){
+                        this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, { detail: action.name }));
+                        console.log("action activated", action.name);
+                    }
                 }
             }
         }
@@ -116,15 +141,22 @@ class InputController {
             for (const action of this._actions.values()){
                 if (action.keys.has(e.code) && action.enabled)
                 {
-                    if(this._last_dispatched.get(action.name)==false)
-                        continue
-
-                    this._target.dispatchEvent(new CustomEvent(InputController.ACTION_DEACTIVATED, { detail: action.name }));
-                    this._last_dispatched.set(action.name, false);
-                    console.log("action deactivated", action.name);
+                    if (this._actions_active.get(action.name) == 0){
+                        this._target.dispatchEvent(new CustomEvent(InputController.ACTION_DEACTIVATED, { detail: action.name }));
+                        console.log("action deactivated", action.name);
+                    }
                 }
             }
         }
+    }
+
+    _getActionName(key){
+        for (const action of this._actions.values()){
+            if (action.keys.has(key)){
+                return action.name;
+            }
+        }
+        return null;
     }
 
 
