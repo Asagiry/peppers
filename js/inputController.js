@@ -21,7 +21,7 @@ class InputController {
 
     bindActions(actionsToBind) {
         for (const action of actionsToBind) {
-            this._actions.set(action.name, { keys: new Set(action.keys), enabled: action.enabled, name: action.name});
+            this._actions.set(action.name, {name: action.name, keys: new Set(action.keys), enabled: action.enabled});
         }
     }
 
@@ -41,11 +41,15 @@ class InputController {
 
         this._target.addEventListener("keydown", this._onKeyDown);
         this._target.addEventListener("keyup", this._onKeyUp);
+
+        this._addFocusEvents();
     }
 
     detach() {
         this._target.removeEventListener("keydown", this._onKeyDown);
-        this._target.removeEventListener("keyup", this._onKeyUp);;
+        this._target.removeEventListener("keyup", this._onKeyUp);
+
+        this._removeFocusEvents();
         this._target = null;
     }
 
@@ -66,10 +70,15 @@ class InputController {
     }
 
     _onKeyDown(e){
-        if (this._enabled == false) {
+        if (this._enabled == false || this._focused == false) {
             return;
         }
-        this._keys_active.set(e.code, true);
+
+        if(this._keys_active){
+            this._keys_active.set(e.code, true);
+        }
+
+
 
         let actionName = this._getActionName(e.code);
         if (this._actions_active.get(actionName)){
@@ -82,10 +91,13 @@ class InputController {
     }
 
     _onKeyUp(e){
-        if (this._enabled == false) {
+        if (this._enabled == false || this._focused == false) {
             return;
         }
-        this._keys_active.set(e.code, false);
+
+        if(this._keys_active){
+            this._keys_active.set(e.code, false);
+        }
 
         let actionName = this._getActionName(e.code);
         if (this._actions_active.get(actionName)){
@@ -140,11 +152,24 @@ class InputController {
     }
 
     _addFocusEvents(){
-        window.addEventListener("focus", () => {
+        window.addEventListener('focus',() => {
             this._focused = true;
         });
-        window.addEventListener("blur", () => {
+        window.addEventListener('blur', () => {
             this._focused = false;
+            this._keys_active.clear();
+            this._actions_active.clear();
+        });
+    }
+
+    _removeFocusEvents(){
+         window.addEventListener('focus',() => {
+            this._focused = true;
+        });
+        window.addEventListener('blur', () => {
+            this._focused = false;
+            this._keys_active.clear();
+            this._actions_active.clear();
         });
     }
 
@@ -156,8 +181,6 @@ class InputController {
             this._onKeyUp(e);
         });
     }
-
-
 
 
 }
