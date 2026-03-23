@@ -8,6 +8,10 @@ class InputController {
     _actions_active = new Map();
     _actions = new Map();
 
+    _boundOnKeyDown = this._onKeyDown.bind(this);
+    _boundOnKeyUp = this._onKeyUp.bind(this);
+
+
     constructor(actionsToBind = [], target = null) {
         if (actionsToBind) {
             this.bindActions(actionsToBind);
@@ -38,17 +42,14 @@ class InputController {
         if (dontEnable == false) {
             this._enabled = true;
         }
-
-        this._target.addEventListener("keydown", this._onKeyDown.bind(this));
-        this._target.addEventListener("keyup", this._onKeyUp.bind(this));
-
+        this._target.addEventListener("keydown", this._boundOnKeyDown);
+        this._target.addEventListener("keyup", this._boundOnKeyUp);
         this._addFocusEvents();
     }
 
     detach() {
-        this._target.removeEventListener("keydown", this._onKeyDown.bind(this));
-        this._target.removeEventListener("keyup", this._onKeyUp.bind(this));
-
+        this._target.removeEventListener("keydown", this._boundOnKeyDown);
+        this._target.removeEventListener("keyup", this._boundOnKeyUp);
         this._removeFocusEvents();
         this._target = null;
     }
@@ -77,8 +78,6 @@ class InputController {
         if(this._keys_active){
             this._keys_active.set(e.code, true);
         }
-
-
 
         let actionName = this._getActionName(e.code);
         if (this._actions_active.get(actionName)){
