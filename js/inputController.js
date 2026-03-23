@@ -210,3 +210,7 @@ class InputController {
     }
 
 }
+
+
+//keydown срёт событиями,
+//джамп срет событиями. 
