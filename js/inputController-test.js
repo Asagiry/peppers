@@ -25,11 +25,11 @@ attachBtn.addEventListener("click", () => {
 activateBtn.addEventListener("click", () => {
     if (isActive){
         activateBtn.innerHTML = "Активация контроллера";
-        inputController.enabled = false;
+        inputController._enabled = false;
         isActive = false;
     } else {
         activateBtn.innerHTML = "Деактивация контроллера";
-        inputController.enabled = true;
+        inputController._enabled = true;
         isActive = true;
     }
 });

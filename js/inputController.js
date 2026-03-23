@@ -3,7 +3,7 @@ class InputController {
     static get ACTION_DEACTIVATED() { return "input-controller:deactivate" };
 
     _enabled = false;
-    _focused = false;
+    _focused = true;
     _keys_active = new Map();
     _actions = new Map();
 
@@ -32,7 +32,7 @@ class InputController {
         this._actions.get(actionName).enabled = false;
     }
 
-    attach(target, dontEnable = false) {
+    attach(target, dontEnable = true) {
         this._target = target;
         this._enabled = !dontEnable;
     }
@@ -42,9 +42,10 @@ class InputController {
     }
 
     isActionActive(actionName) {
-        if (!this._enabled || !this._focused) {
+        if (this._enabled == false) {
             return false;
         }
+        console.log(this._enabled)
         if (!this._actions.get(actionName)) {
             return false;
         }
