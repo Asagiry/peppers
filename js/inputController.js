@@ -39,22 +39,14 @@ class InputController {
             this._enabled = true;
         }
 
-        this.addListeners();
-    }
-
-    addListeners(){
-        this._target.addEventListener("keydown", this.onKeyDown);
-        this._target.addEventListener("keyup", this.onKeyUp);
+        this._target.addEventListener("keydown", this._onKeyDown);
+        this._target.addEventListener("keyup", this._onKeyUp);
     }
 
     detach() {
-        this.removeListeners();
+        this._target.removeEventListener("keydown", this._onKeyDown);
+        this._target.removeEventListener("keyup", this._onKeyUp);;
         this._target = null;
-    }
-
-    removeListeners(){
-        this._target.removeEventListener("keydown", this.onKeyDown);
-        this._target.removeEventListener("keyup", this.onKeyUp);
     }
 
     isActionActive(actionName) {
@@ -73,55 +65,41 @@ class InputController {
         return this._keys_active.get(keyCode);
     }
 
+    _onKeyDown(e){
+        this._keys_active.set(e.code, true);
 
-    _bindEvents() {
-        this._addFocusEvents();
-        this._addKeyEvents();
+        let actionName = this._getActionName(e.code);
+        if (this._actions_active.get(actionName)){
+            this._actions_active.set(actionName, this._actions_active.get(actionName) + 1);
+        } else {
+            this._actions_active.set(actionName, 1);
+        }
+
+        this._addActionActivated(e);
     }
 
-    _addFocusEvents(){
-        window.addEventListener("focus", () => {
-            this._focused = true;
-        });
-        window.addEventListener("blur", () => {
-            this._focused = false;
-        });
+    _onKeyUp(e){
+        this._keys_active.set(e.code, false);
+
+        let actionName = this._getActionName(e.code);
+        if (this._actions_active.get(actionName)){
+            this._actions_active.set(actionName, this._actions_active.get(actionName) - 1);
+        }
+
+        this._addActionDeactivated(e);
     }
 
-    _addKeyEvents(){
-        this._addKeyDown();
-        this._addKeyUp();
-    }
-
-    _addKeyDown(){
-        window.addEventListener("keydown", (e) => {
-            this._keys_active.set(e.code, true);
-
-            let actionName = this._getActionName(e.code);
-            if (this._actions_active.get(actionName)){
-                this._actions_active.set(actionName, this._actions_active.get(actionName) + 1);
-            } else {
-                this._actions_active.set(actionName, 1);
+     _getActionName(key){
+        for (const action of this._actions.values()){
+            if (action.keys.has(key)){
+                return action.name;
             }
-
-            this._addActionActivated(e);
-        });
+        }
+        return null;
     }
 
-    _addKeyUp(){
-        window.addEventListener("keyup", (e) => {
-            this._keys_active.set(e.code, false);
 
-            let actionName = this._getActionName(e.code);
-            if (this._actions_active.get(actionName)){
-                this._actions_active.set(actionName, this._actions_active.get(actionName) - 1);
-            }
-
-            this._addActionDeactivated(e);
-        });
-    }
-
-    _addActionActivated(e){
+     _addActionActivated(e){
         if (this._target) {
             for (const action of this._actions.values())
             {
@@ -150,14 +128,30 @@ class InputController {
         }
     }
 
-    _getActionName(key){
-        for (const action of this._actions.values()){
-            if (action.keys.has(key)){
-                return action.name;
-            }
-        }
-        return null;
+    _bindEvents() {
+        this._addFocusEvents();
+        this._addKeyEvents();
     }
+
+    _addFocusEvents(){
+        window.addEventListener("focus", () => {
+            this._focused = true;
+        });
+        window.addEventListener("blur", () => {
+            this._focused = false;
+        });
+    }
+
+    _addKeyEvents(){
+        window.addEventListener("keydown", (e) => {
+            this._onKeyDown(e);
+        });
+        window.addEventListener("keyup", (e) => {
+            this._onKeyUp(e);
+        });
+    }
+
+
 
 
 }
