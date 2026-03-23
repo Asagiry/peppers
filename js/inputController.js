@@ -34,7 +34,9 @@ class InputController {
 
     attach(target, dontEnable = true) {
         this._target = target;
-        this._enabled = !dontEnable;
+        if(dontEnable == false){
+            this._enabled = true;
+        }
     }
 
     detach() {
