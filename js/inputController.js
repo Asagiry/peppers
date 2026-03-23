@@ -1,27 +1,43 @@
 class InputController {
-    static get ACTION_ACTIVATED() { return "input-controller:activate" };
-    static get ACTION_DEACTIVATED() { return "input-controller:deactivate" };
 
-    _enabled = false;
-    _focused = true;
-    _keys_active = new Map();
+    //#region Точно верно.
+
+    static get ACTION_ACTIVATED() { return "input-controller:action-activated" };
+    static get ACTION_DEACTIVATED() { return "input-controller:action-deactivated" };
+
+    get enabled() {return this._enabled;}
+    set enabled(value) {this._enabled = value;}
+
+    get focused() {return this._focused;}
+    set focused(value) {this._focused = value;}
+
+
     _actions_active = new Map();
     _actions = new Map();
+    _keys_active = new Map();
 
-    _boundOnKeyDown = this._onKeyDown.bind(this);
-    _boundOnKeyUp = this._onKeyUp.bind(this);
+    _bindedOnKeyDown = this._onKeyDown.bind(this);
+    _bindedOnKeyUp = this._onKeyUp.bind(this);
+
+    _bindedOnFocus;
+    _bindedOnBlur;
+    //#endregion Точно верно.
 
 
+    //#region Точно верно.
     constructor(actionsToBind = [], target = null) {
+        this._enabled = false;
+
         if (actionsToBind) {
             this.bindActions(actionsToBind);
         }
         if (target) {
             this.attach(target);
         }
-
-        this._bindEvents();
+        return this;
     }
+    //#endregion Точно верно.
+
 
     bindActions(actionsToBind) {
         for (const action of actionsToBind) {
@@ -37,21 +53,58 @@ class InputController {
         this._actions.get(actionName).enabled = false;
     }
 
+    
+
     attach(target, dontEnable = true) {
+        if (this._target === target){
+            return;
+        }
+        
+        if (this._target){
+            this.detach();
+        }
+
         this._target = target;
+        this._target.focus();
+
         if (dontEnable == false) {
             this._enabled = true;
         }
-        this._target.addEventListener("keydown", this._boundOnKeyDown);
-        this._target.addEventListener("keyup", this._boundOnKeyUp);
-        this._addFocusEvents();
+
+
+        this._addTargetEvents();
+
+    }
+
+    _addTargetEvents(){
+        this._bindedOnFocus = this._onFocus.bind(this);
+        this._bindedOnBlur = this._onBlur.bind(this);
+
+        this._target.addEventListener("focus", this._bindedOnFocus);
+        this._target.addEventListener("blur", this._bindedOnBlur);
+
+        this._target.addEventListener("keydown", this._bindedOnKeyDown);
+        this._target.addEventListener("keyup", this._bindedOnKeyUp);
     }
 
     detach() {
-        this._target.removeEventListener("keydown", this._boundOnKeyDown);
-        this._target.removeEventListener("keyup", this._boundOnKeyUp);
-        this._removeFocusEvents();
+        if (!this._target){
+            return;
+        }
+
+        this._target.removeEventListener("focus", this._bindedOnFocus);
+        this._target.removeEventListener("blur", this._bindedOnBlur);
+
+        this._target.removeEventListener("keydown", this._bindedOnKeyDown);
+        this._target.removeEventListener("keyup", this._bindedOnKeyUp);
+
         this._target = null;
+
+        this._actions_active.clear();
+        this._keys_active.clear();
+
+        this._bindedOnBlur = null;
+        this._bindedOnFocus = null;
     }
 
     isActionActive(actionName) {
@@ -145,38 +198,15 @@ class InputController {
         }
     }
 
-    _bindEvents() {
-        this._addFocusEvents();
-        this._addKeyEvents();
+    
+    _onFocus(e){
+       this._focused = true; 
     }
 
-    _addFocusEvents(){
-        window.addEventListener('focus',() => {
-            this._focused = true;
-        });
-        window.addEventListener('blur', () => {
-            this._focused = false;
-            this._keys_active.clear();
-            this._actions_active.clear();
-        });
+    _onBlur(e){
+        this._focused = false;
+        this._keys_active.clear();
+        this._actions_active.clear();
     }
-
-    _removeFocusEvents(){
-         window.addEventListener('focus',() => {
-            this._focused = true;
-        });
-        window.addEventListener('blur', () => {
-            this._focused = false;
-            this._keys_active.clear();
-            this._actions_active.clear();
-        });
-
-    }
-
-    _addKeyEvents(){
-        window.addEventListener("keydown", this._onKeyDown.bind(this));
-        window.addEventListener("keyup", this._onKeyUp.bind(this));
-    }
-
 
 }

@@ -11,12 +11,21 @@
 <body>
   <div id="test_buttons" class="container">
     <button id="attach_btn" class="btn" onclick="this.blur()">Аттач к элементу DOM</button>
+    <button id="detach_btn" class="btn" onclick="this.blur()">Оттач от элемента DOM</button>
     <button id="activate_btn" class="btn" onclick="this.blur()">Активация контроллера</button>
+    <button id="deactivate_btn" class="btn" onclick="this.blur()">Деактивация контроллера</button>
     <button id="bindJumpToSpace" class="btn" onclick="this.blur()">Байнд доп. активности "прыжок" на кнопку "пробел"</button>
+    <button id="unbindJumpToSpace" class="btn" onclick="this.blur()">Отменить байнд доп. активности "прыжок" на кнопку "пробел"</button>
   </div>
 
   <div class="container">
-    <canvas id="canvas" class="interactive_element"></canvas>
+    <canvas id="canvas" class="interactive_element" tabindex="0"></canvas>
+  </div>
+
+  <div class="logs-container">
+    <span class="logs_header">Логи</span>
+    <div id="log_text" class="logs_text">
+    </div>
   </div>
 
   <script src="./js/inputController.js"></script>

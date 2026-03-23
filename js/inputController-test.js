@@ -1,51 +1,43 @@
 const attachBtn = document.getElementById("attach_btn");
+const detachBtn = document.getElementById("detach_btn");
 const activateBtn = document.getElementById("activate_btn");
+const deactivateBtn = document.getElementById("deactivate_btn");
 const bindJumpToSpaceBtn = document.getElementById("bindJumpToSpace");
+const unbindJumpToSpaceBtn = document.getElementById("unbindJumpToSpace");
 
 const inputController = new InputController();
 
-var isAttached = false;
-var isActive = false;
-var isBinded = false;
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
 attachBtn.addEventListener("click", () => {
-    if (isAttached){
-        attachBtn.innerHTML = "Аттач к элементу DOM";
-        inputController.detach();
-        isAttached = false;
-    } else {
-        attachBtn.innerHTML = "Деттач от элемента DOM";
-        inputController.attach(canvas);
-        isAttached = true;
-    }
+    addLog("Attached to canvas");
+    inputController.attach(canvas);
+});
+
+detachBtn.addEventListener("click", () => {
+    addLog("Detached from canvas");
+    inputController.detach();
 });
 
 activateBtn.addEventListener("click", () => {
-    if (isActive){
-        activateBtn.innerHTML = "Активация контроллера";
-        inputController._enabled = false;
-        isActive = false;
-    } else {
-        activateBtn.innerHTML = "Деактивация контроллера";
-        inputController._enabled = true;
-        isActive = true;
-    }
+    addLog("Enabled");
+    inputController.enabled = true;
+});
+
+deactivateBtn.addEventListener("click", () => {
+    addLog("Disabled");
+    inputController.enabled = false;
 });
 
 bindJumpToSpaceBtn.addEventListener("click", () => {
-    if (!isBinded){
-        bindJumpToSpaceBtn.innerHTML = "Отвязать доп. активность 'прыжок' от кнопки 'пробел'";
-        console.log("bind jump to space");
-        inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : true}]);
-        isBinded = true;
-    } else{
-        bindJumpToSpaceBtn.innerHTML = "Байнд доп. активности 'прыжок' на кнопку 'пробел'";
-        console.log("unbind jump to space");
-        inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : false}]);
-        isBinded = false;
-    }
+    addLog("bindJumpToSpace");
+    inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : true}]);
+});
+
+unbindJumpToSpaceBtn.addEventListener("click", () => {
+    addLog("unbindJumpToSpace");
+    inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : false}]);
 });
 
 inputController.bindActions([
@@ -55,7 +47,6 @@ inputController.bindActions([
     {name : "down", keys: ["ArrowDown", "KeyS"], enabled : true},
     {name : "jump", keys: ["Space"], enabled : true}
 ]);
-
 
 
 function gameLoop(){
@@ -97,7 +88,7 @@ function handleMovement(){
 
 function handleJump(){
     if (inputController.isActionActive("changeColor")){
-        console.log("changeColor");
+        addLog("changeColor");
         ctx.fillStyle = "blue";
     } else {
         ctx.fillStyle = "red";
@@ -107,5 +98,16 @@ function handleJump(){
         ctx.arc(x, y, 25, 0, 2 * Math.PI);
         ctx.stroke();
     }
+}
+
+
+function addLog(message){
+    let theDate = new Date(Date.now());
+    let dateString = theDate.toGMTString();
+
+    const log = document.createElement("span");
+    log.textContent = message + " " + dateString;
+    document.getElementById("log_text").appendChild(log);
+    document.getElementById("log_text").scrollTop = document.getElementById("log_text").scrollHeight;
 }
 
