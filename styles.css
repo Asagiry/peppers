@@ -1,0 +1,22 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+.interactive_element {
+    border: 1px solid black;
+    margin-top: 10px;
+    width: 50%;
+    height: 50%;
+}

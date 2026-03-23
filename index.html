@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Input Controller test</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+  <div id="test_buttons" class="container">
+    <button id="attach_btn" class="btn" onclick="this.blur()">Аттач к элементу DOM</button>
+    <button id="activate_btn" class="btn" onclick="this.blur()">Активация контроллера</button>
+    <button id="bindJumpToSpace" class="btn" onclick="this.blur()">Байнд доп. активности "прыжок" на кнопку "пробел"</button>
+  </div>
+
+  <div class="container">
+    <canvas id="canvas" class="interactive_element"></canvas>
+  </div>
+
+  <script src="./js/inputController.js"></script>
+  <script src="./js/inputController-test.js"></script>
+</body>
+
+</html>
