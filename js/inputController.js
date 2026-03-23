@@ -44,10 +44,7 @@ class InputController {
     }
 
     isActionActive(actionName) {
-        if (this._enabled == false) {
-            return false;
-        }
-        if (!this._actions.get(actionName)) {
+        if (this._enabled == false || !this._actions.get(actionName)) {
             return false;
         }
         for (const key of this._actions.get(actionName).keys) {
@@ -64,17 +61,31 @@ class InputController {
 
 
     _bindEvents() {
-        window.addEventListener("keydown", (e) => {
-            this._keys_active.set(e.code, true);
-            this._activeCallback(e);
+        this._addFocusEvents();
+        this._addKeyEvents();
+    }
+
+    _addFocusEvents(){
+        window.addEventListener("focus", () => {
+            this._focused = true;
         });
-        window.addEventListener("keyup", (e) => {
-            this._keys_active.set(e.code, false);
-            this._deactiveCallback(e);
+        window.addEventListener("blur", () => {
+            this._focused = false;
         });
     }
 
-    _activeCallback(e){
+    _addKeyEvents(){
+        window.addEventListener("keydown", (e) => {
+            this._keys_active.set(e.code, true);
+            this._addActionActivated(e);
+        });
+        window.addEventListener("keyup", (e) => {
+            this._keys_active.set(e.code, false);
+            this._addActionDeactivated(e);
+        });
+    }
+
+    _addActionActivated(e){
         if (this._target) {
             for (const action of this._actions.values()){
                 if (action.keys.has(e.code) && action.enabled){
@@ -84,7 +95,7 @@ class InputController {
         }
     }
 
-    _deactiveCallback(e){
+    _addActionDeactivated(e){
         if (this._target) {
             for (const action of this._actions.values()){
                 if (action.keys.has(e.code) && action.enabled){
