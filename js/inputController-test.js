@@ -38,12 +38,12 @@ bindJumpToSpaceBtn.addEventListener("click", () => {
     if (!isBinded){
         bindJumpToSpaceBtn.innerHTML = "Отвязать доп. активность 'прыжок' от кнопки 'пробел'";
         console.log("bind jump to space");
-        inputController.bindActions([{name : "jump", keys: ["Space"], enabled : true}]);
+        inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : true}]);
         isBinded = true;
     } else{
         bindJumpToSpaceBtn.innerHTML = "Байнд доп. активности 'прыжок' на кнопку 'пробел'";
         console.log("unbind jump to space");
-        inputController.bindActions([{name : "jump", keys: ["Space"], enabled : false}]);
+        inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : false}]);
         isBinded = false;
     }
 });
@@ -52,7 +52,8 @@ inputController.bindActions([
     {name : "left", keys: ["ArrowLeft", "KeyA"], enabled : true},
     {name : "right", keys: ["ArrowRight", "KeyD"], enabled : true},
     {name : "up", keys: ["ArrowUp", "KeyW"], enabled : true},
-    {name : "down", keys: ["ArrowDown", "KeyS"], enabled : true}
+    {name : "down", keys: ["ArrowDown", "KeyS"], enabled : true},
+    {name : "jump", keys: ["Space"], enabled : true}
 ]);
 
 
@@ -95,11 +96,16 @@ function handleMovement(){
 }
 
 function handleJump(){
-    if (inputController.isActionActive("jump")){
-        console.log("jump");
+    if (inputController.isActionActive("changeColor")){
+        console.log("changeColor");
         ctx.fillStyle = "blue";
     } else {
         ctx.fillStyle = "red";
+    }
+
+    if (inputController.isActionActive("jump")){
+        ctx.arc(x, y, 25, 0, 2 * Math.PI);
+        ctx.stroke();
     }
 }
 

@@ -47,7 +47,6 @@ class InputController {
         if (this._enabled == false) {
             return false;
         }
-        console.log(this._enabled)
         if (!this._actions.get(actionName)) {
             return false;
         }
