@@ -66,6 +66,9 @@ class InputController {
     }
 
     _onKeyDown(e){
+        if (this._enabled == false) {
+            return;
+        }
         this._keys_active.set(e.code, true);
 
         let actionName = this._getActionName(e.code);
@@ -79,6 +82,9 @@ class InputController {
     }
 
     _onKeyUp(e){
+        if (this._enabled == false) {
+            return;
+        }
         this._keys_active.set(e.code, false);
 
         let actionName = this._getActionName(e.code);
