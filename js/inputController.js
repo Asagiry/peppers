@@ -9,6 +9,9 @@ class InputController {
     get focused() {return this._focused;}
     set focused(value) {this._focused = value;}
 
+    get plugins() {return this._plugins;}
+
+
     _actions = new Map();
     _activeActions = new Map();
 
@@ -134,6 +137,8 @@ class InputController {
             }
         }
     }
+
+    
 
     
     _onFocus(e){

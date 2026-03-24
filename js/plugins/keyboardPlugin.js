@@ -162,6 +162,9 @@ class KeyboardPlugin{
                     return;
                 }
 
+                if (inputController.plugins().some((plugin) => plugin.isActionActive(actionName) && plugin !== this)){
+                    return;
+                }
                 this._target.dispatchEvent(new CustomEvent(InputController.ACTION_DEACTIVATED, {bubbles : true, detail: {actionName: actionName}}));
             }
         }
