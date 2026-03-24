@@ -18,7 +18,12 @@ class KeyboardPlugin extends InputPlugin{
             }
 
             if (this._actions.has(action.name)){
-                this._actions.get(action.name).keys.add(...keys);
+                keys.forEach(key => {
+                    if (!this._actions.get(action.name).keys.includes(key)){
+                        this._actions.get(action.name).keys.push(key)
+                    }
+                });
+                
             } 
 
             else {

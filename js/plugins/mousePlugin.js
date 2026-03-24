@@ -25,7 +25,12 @@ class MousePlugin extends InputPlugin{
             }
 
             if (this._actions.has(action.name)){
-                this._actions.get(action.name).mouse.add(...mouse_buttons);
+                mouse_buttons.forEach(button => {
+                    if (!this._actions.get(action.name).mouse.includes(button)){
+                        this._actions.get(action.name).mouse.push(button)
+                    }
+                });
+                
             } 
 
             else {
