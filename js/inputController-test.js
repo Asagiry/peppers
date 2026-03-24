@@ -41,12 +41,12 @@ deactivateBtn.addEventListener("click", () => {
 
 bindJumpToSpaceBtn.addEventListener("click", () => {
     console.log("bindJumpToSpace");
-    inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : true}]);
+    inputController.bindActions([{name : "changeColor", keys: ["32"], enabled : true}]);
 });
 
 unbindJumpToSpaceBtn.addEventListener("click", () => {
     console.log("unbindJumpToSpace");
-    inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : false}]);
+    inputController.bindActions([{name : "changeColor", keys: ["32"], enabled : false}]);
 });
 
 inputController.bindActions([

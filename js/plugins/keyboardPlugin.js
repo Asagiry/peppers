@@ -10,6 +10,9 @@ class KeyboardPlugin extends InputPlugin{
         for (const action of actionsToBind) {
             let keys = [];
 
+            if (!action.keys) 
+                continue;
+
             for (const key of action.keys){
                 keys.push(Number(key));
             }
@@ -38,6 +41,7 @@ class KeyboardPlugin extends InputPlugin{
             this._keys_active.set(e.keyCode, true);
         }
 
+        console.log(this._getActionsNames(e.keyCode));
         for (const actionName of this._getActionsNames(e.keyCode)){
             this._activateAction(actionName);
         }

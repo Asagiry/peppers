@@ -40,7 +40,7 @@ class InputPlugin{
     removeEventListeners(){
         if (!this._target) return;
         for (const event in this._bindedEvents){
-            this._target.removeEventListener(event, this._bindedEvents.event);
+            this._target.removeEventListener(event, this._bindedEvents[event.toString()]);
         }
     }
     
@@ -74,15 +74,11 @@ class InputPlugin{
     }
 
     isActionActive(actionName){
-        if (this._enabled == false || !this._actions.get(actionName)) {
+        if (this._inputController._enabled == false || !this._actions.get(actionName)) {
             return false;
         }
-        for (const action of this._activeActions.values()){
-            if (action.name === actionName){
-                return true;
-            }
-        }
-        return false;
+
+        return this._activeActions.get(actionName);
     }
 
     isKeyPressed(keyCode){
@@ -101,7 +97,7 @@ class InputPlugin{
         
         this._activeActions.set(actionName, 1);
 
-        if (inputController.isActionActive(actionName)){
+        if (this._inputController.isActionActive(actionName)){
             return;
         }
 
@@ -118,21 +114,14 @@ class InputPlugin{
             this._activeActions.set(actionName, this._activeActions.get(actionName) - 1);
             if (this._activeActions.get(actionName) == 0){
 
-                console.log(this,actionName)
-
-                if (!inputController.isActionActive(actionName)){
+                if (!this._inputController.isActionActive(actionName)){
                     return;
                 }
 
-
-                for (const plugin of inputController._plugins){
-                    
-                    //Надо фиксить
-                    console.log(plugin._activeActions, actionName, plugin.isActionActive(actionName))
+                for (const plugin of this._inputController._plugins){
                     if (plugin.isActionActive(actionName) && plugin != this){
                         return;
                     }
-    
                 }
 
                 this._target.dispatchEvent(new CustomEvent(InputController.ACTION_DEACTIVATED, {bubbles : true, detail: {actionName: actionName}}));

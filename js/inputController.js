@@ -132,13 +132,9 @@ class InputController {
 
     isKeyPressed(keyCode) {
         for (const plugin of this._plugins){
-            if (plugin.hasAction(keyCode)){
-                return plugin.isKeyPressed(keyCode);
-            }
+            return plugin.isKeyPressed(keyCode);
         }
     }
-
-    
 
     
     _onFocus(e){

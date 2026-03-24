@@ -42,7 +42,6 @@ class MousePlugin extends InputPlugin{
     }
 
     
-
     _onMouseDown(e){
         if (this._keys_active.get(e.button)){
             return;
@@ -50,6 +49,7 @@ class MousePlugin extends InputPlugin{
             this._keys_active.set(e.button, true);
         }
 
+        console.log(this._getActionsNames(e.button));
         for (const actionName of this._getActionsNames(e.button)){
             this._activateAction(actionName);
         }
