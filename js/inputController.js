@@ -32,22 +32,10 @@ class InputController {
 
         document.addEventListener(InputController.ACTION_ACTIVATED,(e)=>{
             this._activeActions.set(e.detail.actionName, true);
-
-            for (const plugin of this._plugins){
-                if (plugin.hasAction(e.detail.actionName)){
-                    //do smth
-                }
-            }
         })
 
         document.addEventListener(InputController.ACTION_DEACTIVATED,(e)=>{
             this._activeActions.set(e.detail.actionName, false);
-
-            for (const plugin of this._plugins){
-                if (plugin.hasAction(e.detail.actionName)){
-                    //do smth
-                }
-            }
         })
 
         return this;
@@ -119,6 +107,8 @@ class InputController {
         if (!this._target){
             return;
         }
+
+        this._enabled = false;
 
         this._target.removeEventListener("focus", this._bindedOnFocus);
         this._target.removeEventListener("blur", this._bindedOnBlur);

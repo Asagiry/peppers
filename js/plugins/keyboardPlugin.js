@@ -47,12 +47,18 @@ class KeyboardPlugin{
     }
 
     attach(target){
+        this.detach();
+
         this._target = target;
+
         this.addEventListeners();
     }
 
     detach(){
         this.removeEventListeners();
+
+        this._activeActions.clear();
+        this._keys_active.clear();
         this._target = null;
     }
 
@@ -62,6 +68,9 @@ class KeyboardPlugin{
     }
 
     removeEventListeners(){
+        if (!this._target){
+            return;
+        }
         this._target.removeEventListener("keydown", this.bindedKeyDown);
         this._target.removeEventListener("keyup", this.bindedKeyUp);
     }
