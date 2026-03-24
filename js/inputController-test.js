@@ -6,12 +6,14 @@ const bindJumpToSpaceBtn = document.getElementById("bindJumpToSpace");
 const unbindJumpToSpaceBtn = document.getElementById("unbindJumpToSpace");
 
 const keyBoardPlugin = new KeyboardPlugin();
+const mousePlugin = new MousePlugin();
 const inputController = new InputController(
     null,
     null,
-    [keyBoardPlugin]
+    [keyBoardPlugin, mousePlugin]
 );
 keyBoardPlugin._inputController = inputController;
+mousePlugin._inputController = inputController;
 
 
 var canvas = document.getElementById("canvas");
@@ -48,11 +50,11 @@ unbindJumpToSpaceBtn.addEventListener("click", () => {
 });
 
 inputController.bindActions([
-    {name : "left", keys: ["65", "37"], enabled : true},
-    {name : "right", keys: ["68", "39"], enabled : true},
+    {name : "left", keys: ["65", "37"], mouse: ["left"], enabled : true},
+    {name : "right", keys: ["68", "39"], mouse: ["right"], enabled : true},
     {name : "up", keys: ["87", "38"], enabled : true},
     {name : "down", keys: ["83", "40"], enabled : true},
-    {name : "jump", keys: ["32"], enabled : true}
+    {name : "jump", keys: ["32"], mouse: ["middle"], enabled : true}
 ]);
 
 
@@ -106,4 +108,3 @@ function handleJump(){
         ctx.stroke();
     }
 }
-
