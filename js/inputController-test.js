@@ -5,47 +5,54 @@ const deactivateBtn = document.getElementById("deactivate_btn");
 const bindJumpToSpaceBtn = document.getElementById("bindJumpToSpace");
 const unbindJumpToSpaceBtn = document.getElementById("unbindJumpToSpace");
 
-const inputController = new InputController();
+const keyBoardPlugin = new KeyboardPlugin();
+const inputController = new InputController(
+    null,
+    null,
+    [keyBoardPlugin]
+);
+keyBoardPlugin._inputController = inputController;
+
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
 attachBtn.addEventListener("click", () => {
-    addLog("Attached to canvas");
+    console.log("Attached to canvas");
     inputController.attach(canvas);
 });
 
 detachBtn.addEventListener("click", () => {
-    addLog("Detached from canvas");
+    console.log("Detached from canvas");
     inputController.detach();
 });
 
 activateBtn.addEventListener("click", () => {
-    addLog("Enabled");
+    console.log("Enabled");
     inputController.enabled = true;
 });
 
 deactivateBtn.addEventListener("click", () => {
-    addLog("Disabled");
+    console.log("Disabled");
     inputController.enabled = false;
 });
 
 bindJumpToSpaceBtn.addEventListener("click", () => {
-    addLog("bindJumpToSpace");
+    console.log("bindJumpToSpace");
     inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : true}]);
 });
 
 unbindJumpToSpaceBtn.addEventListener("click", () => {
-    addLog("unbindJumpToSpace");
+    console.log("unbindJumpToSpace");
     inputController.bindActions([{name : "changeColor", keys: ["Space"], enabled : false}]);
 });
 
 inputController.bindActions([
-    {name : "left", keys: ["ArrowLeft", "KeyA"], enabled : true},
-    {name : "right", keys: ["ArrowRight", "KeyD"], enabled : true},
-    {name : "up", keys: ["ArrowUp", "KeyW"], enabled : true},
-    {name : "down", keys: ["ArrowDown", "KeyS"], enabled : true},
-    {name : "jump", keys: ["Space"], enabled : true}
+    {name : "left", keys: ["65", "37"], enabled : true},
+    {name : "right", keys: ["68", "39"], enabled : true},
+    {name : "up", keys: ["87", "38"], enabled : true},
+    {name : "down", keys: ["83", "40"], enabled : true},
+    {name : "jump", keys: ["32"], enabled : true}
 ]);
 
 
@@ -88,7 +95,7 @@ function handleMovement(){
 
 function handleJump(){
     if (inputController.isActionActive("changeColor")){
-        addLog("changeColor");
+        console.log("changeColor");
         ctx.fillStyle = "blue";
     } else {
         ctx.fillStyle = "red";
@@ -98,16 +105,5 @@ function handleJump(){
         ctx.arc(x, y, 25, 0, 2 * Math.PI);
         ctx.stroke();
     }
-}
-
-
-function addLog(message){
-    let theDate = new Date(Date.now());
-    let dateString = theDate.toGMTString();
-
-    const log = document.createElement("span");
-    log.textContent = message + " " + dateString;
-    document.getElementById("log_text").appendChild(log);
-    document.getElementById("log_text").scrollTop = document.getElementById("log_text").scrollHeight;
 }
 
