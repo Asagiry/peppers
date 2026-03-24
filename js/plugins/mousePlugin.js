@@ -1,20 +1,4 @@
-class MousePlugin{
-    
-    target = null;
-    _inputController = null;
-    
-    _actions = new Map();
-    _activeActions = new Map();
-    _keys_active = new Map();
-
-    _bindedMouseDown = this._onMouseDown.bind(this);
-    _bindedMouseUp = this._onMouseUp.bind(this);
-
-    constructor(target = null){
-        if(target){
-            this._target = target;
-        }
-    }
+class MousePlugin extends InputPlugin{
 
     bindActions(actionsToBind) {
         for (const action of actionsToBind) {
@@ -48,60 +32,16 @@ class MousePlugin{
                 this._actions.set(action.name, {name: action.name, mouse: mouse_buttons, enabled: action.enabled});
             }
         }
-        console.log(this._actions)
     }
 
-    attach(target){
-        this.detach();
-
-        this._target = target;
-
-        this.addEventListeners();
-    }
-
-    detach(){
-        this.removeEventListeners();
-
-        this._activeActions.clear();
-        this._keys_active.clear();
-        this._target = null;
-    }
-
-    addEventListeners(){
-        this._target.addEventListener("mousedown", this._bindedMouseDown);
-        this._target.addEventListener("mouseup", this._bindedMouseUp);
-    }
-
-    removeEventListeners(){
-        if (!this._target){
-            return;
-        }
-
-        this._target.removeEventListener("mousedown", this._bindedMouseDown);
-        this._target.removeEventListener("mouseup", this._bindedMouseUp);
-    }
-
-    isActionActive(actionName) {
-        return this._activeActions.get(actionName);
-    }
-
-    isKeyPressed(mouseCode) {
-        return this._keys_active.get(mouseCode);
-    }
-
-    hasAction(actionName) {
-        return this._actions.has(actionName);
-    }
-
-    enableAction(actionName){
-        this._actions.get(actionName).enabled = true;
-    }
-
-    disableAction(actionName) {
-        if (this._actions.get(actionName)){
-            this._actions.get(actionName).enabled = false;
+    _bindEvents(){
+        this._bindedEvents = {       
+            mousedown: this._onMouseDown.bind(this),
+            mouseup: this._onMouseUp.bind(this)
         }
     }
+
+    
 
     _onMouseDown(e){
         if (this._keys_active.get(e.button)){
@@ -126,58 +66,4 @@ class MousePlugin{
             this._deactivateAction(actionName);
         }
     }
-
-    _activateAction(actionName){
-        if (!this._actions.get(actionName).enabled){
-            return;
-        }
-
-        if (this._activeActions.get(actionName)){
-            this._activeActions.set(actionName, this._activeActions.get(actionName) + 1);
-            return;
-        } 
-        
-        this._activeActions.set(actionName, 1);
-
-        if (inputController.isActionActive(actionName)){
-            return;
-        }
-
-        this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, {bubbles : true, detail: {actionName: actionName}}));
-        
-    }
-
-    _deactivateAction(actionName){
-        if (!this._actions.get(actionName).enabled){
-            return;
-        }
-
-        if (this._activeActions.get(actionName)){
-            this._activeActions.set(actionName, this._activeActions.get(actionName) - 1);
-            if (this._activeActions.get(actionName) == 0){
-
-                if (!inputController.isActionActive(actionName)){
-                    return;
-                }
-
-                if (inputController.plugins.some((plugin) => plugin.isActionActive(actionName) && plugin !== this)){
-                    return;
-                }
-
-                this._target.dispatchEvent(new CustomEvent(InputController.ACTION_DEACTIVATED, {bubbles : true, detail: {actionName: actionName}}));
-            }
-        }
-    }
-
-    _getActionsNames(key){
-        let actionsName = [];
-        for (const action of this._actions.values()){
-            if (action.mouse.includes(key)){
-                actionsName.push(action.name);
-            }
-        }
-        return actionsName;
-    }
-    
-
 }
