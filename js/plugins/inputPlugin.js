@@ -1,9 +1,11 @@
+import {ACTION_ACTIVATED, ACTION_DEACTIVATED} from "../const.js";
+
 /**
  * Abstract class InputPlugin
  * 
  * @class InputPlugin
  */
-class InputPlugin{
+export class InputPlugin{
     _target = null;
     _inputController = null;
     
@@ -106,7 +108,7 @@ class InputPlugin{
             return;
         }
 
-        this._target.dispatchEvent(new CustomEvent(InputController.ACTION_ACTIVATED, {bubbles : true, detail: {actionName: actionName}}));
+        this._target.dispatchEvent(new CustomEvent(ACTION_ACTIVATED, {bubbles : true, detail: {actionName: actionName}}));
         
     }
 
@@ -129,7 +131,7 @@ class InputPlugin{
                     }
                 }
 
-                this._target.dispatchEvent(new CustomEvent(InputController.ACTION_DEACTIVATED, {bubbles : true, detail: {actionName: actionName}}));
+                this._target.dispatchEvent(new CustomEvent(ACTION_DEACTIVATED, {bubbles : true, detail: {actionName: actionName}}));
             }
         }
     }

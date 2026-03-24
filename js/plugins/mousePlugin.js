@@ -1,4 +1,6 @@
-class MousePlugin extends InputPlugin{
+import {InputPlugin} from "./inputPlugin.js"
+
+export class MousePlugin extends InputPlugin{
 
     bindActions(actionsToBind) {
         for (const action of actionsToBind) {
@@ -30,9 +32,9 @@ class MousePlugin extends InputPlugin{
                         this._actions.get(action.name).mouse.push(button)
                     }
                 });
-                
-            } 
 
+               this._actions.get(action.name).enabled = action.enabled; 
+            } 
             else {
                 this._actions.set(action.name, {name: action.name, mouse: mouse_buttons, enabled: action.enabled});
             }

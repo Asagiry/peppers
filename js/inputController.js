@@ -1,7 +1,6 @@
-class InputController {
+import {ACTION_ACTIVATED, ACTION_DEACTIVATED} from "./const.js";
 
-    static ACTION_ACTIVATED = "input-controller:action-activated";
-    static ACTION_DEACTIVATED = "input-controller:action-deactivated";
+export class InputController {
 
     get enabled() {return this._enabled;}
     set enabled(value) {this._enabled = value;}
@@ -12,7 +11,6 @@ class InputController {
     get plugins() {return this._plugins;}
 
 
-    _actions = new Map();
     _activeActions = new Map();
 
     _plugins = {};
@@ -109,7 +107,7 @@ class InputController {
         this._removeTargetEvents();
 
         this._target = null;
-        this._activeActions = null;
+        this._activeActions.clear();
 
         this._bindedOnBlur = null;
         this._bindedOnFocus = null;
@@ -139,16 +137,16 @@ class InputController {
         this._target.addEventListener("focus", this._bindedOnFocus);
         this._target.addEventListener("blur", this._bindedOnBlur);
 
-        this._target.addEventListener(InputController.ACTION_ACTIVATED, this._bindedOnActionActivated);
-        this._target.addEventListener(InputController.ACTION_DEACTIVATED, this._bindedOnActionDeactivated);
+        this._target.addEventListener(ACTION_ACTIVATED, this._bindedOnActionActivated);
+        this._target.addEventListener(ACTION_DEACTIVATED, this._bindedOnActionDeactivated);
     }
 
     _removeTargetEvents(){
         this._target.removeEventListener("focus", this._bindedOnFocus);
         this._target.removeEventListener("blur", this._bindedOnBlur);
 
-        this._target.removeEventListener(InputController.ACTION_ACTIVATED, this._bindedOnActionActivated);
-        this._target.removeEventListener(InputController.ACTION_DEACTIVATED, this._bindedOnActionDeactivated);
+        this._target.removeEventListener(ACTION_ACTIVATED, this._bindedOnActionActivated);
+        this._target.removeEventListener(ACTION_DEACTIVATED, this._bindedOnActionDeactivated);
     }
 
     isActionActive(actionName) {

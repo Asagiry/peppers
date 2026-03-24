@@ -1,3 +1,7 @@
+import {InputController} from "./inputController.js";
+import {KeyboardPlugin} from "./plugins/keyboardPlugin.js";
+import {MousePlugin} from "./plugins/mousePlugin.js";
+
 const attachBtn = document.getElementById("attach_btn");
 const detachBtn = document.getElementById("detach_btn");
 const activateBtn = document.getElementById("activate_btn");

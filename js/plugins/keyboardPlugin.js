@@ -1,10 +1,6 @@
-/*
-Вторая часть: добавить логику, чтобы к контроллеру можно было подключать плагины: 
-типа ввода (клавиатуру, мышь), 
-Плагины в свою очередь берут из настроек экшена самостоятельно параметры и решают активен экшен или нет
-*/
+import {InputPlugin} from "./inputPlugin.js"
 
-class KeyboardPlugin extends InputPlugin{
+export class KeyboardPlugin extends InputPlugin{
 
     bindActions(actionsToBind) {
         for (const action of actionsToBind) {
