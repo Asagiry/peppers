@@ -23,6 +23,8 @@ class KeyboardPlugin extends InputPlugin{
                         this._actions.get(action.name).keys.push(key)
                     }
                 });
+
+                this._actions.get(action.name).enabled = action.enabled;
                 
             } 
 
@@ -45,8 +47,6 @@ class KeyboardPlugin extends InputPlugin{
         } else {
             this._keys_active.set(e.keyCode, true);
         }
-
-        console.log(this._getActionsNames(e.keyCode));
         for (const actionName of this._getActionsNames(e.keyCode)){
             this._activateAction(actionName);
         }

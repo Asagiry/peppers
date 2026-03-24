@@ -20,6 +20,9 @@ class InputController {
     _bindedOnFocus;
     _bindedOnBlur;
 
+    _bindedOnActionActivated;
+    _bindedOnActionDeactivated;
+
 
     constructor(actionsToBind = [], target = null, plugins = []) {
         this._enabled = false;
@@ -27,19 +30,13 @@ class InputController {
 
         if (target) {
             this.attach(target);
+
+            
         }
 
         if (actionsToBind) {
             this.bindActions(actionsToBind);
         }
-
-        document.addEventListener(InputController.ACTION_ACTIVATED,(e)=>{
-            this._activeActions.set(e.detail.actionName, true);
-        })
-
-        document.addEventListener(InputController.ACTION_DEACTIVATED,(e)=>{
-            this._activeActions.set(e.detail.actionName, false);
-        })
 
         return this;
     }
@@ -49,6 +46,7 @@ class InputController {
         for (const plugin of this._plugins){
             plugin.bindActions(actionsToBind);
         }
+
     }
 
     enableAction(actionName) {
@@ -92,18 +90,9 @@ class InputController {
             plugin.attach(target);
         }
 
+        this._createActionEvents();
 
         this._addTargetEvents();
-
-    }
-
-    _addTargetEvents(){
-        this._bindedOnFocus = this._onFocus.bind(this);
-        this._bindedOnBlur = this._onBlur.bind(this);
-
-        this._target.addEventListener("focus", this._bindedOnFocus);
-        this._target.addEventListener("blur", this._bindedOnBlur);
-
     }
 
     detach() {
@@ -113,17 +102,53 @@ class InputController {
 
         this._enabled = false;
 
-        this._target.removeEventListener("focus", this._bindedOnFocus);
-        this._target.removeEventListener("blur", this._bindedOnBlur);
-
         for (const plugin of this._plugins){
-            plugin.removeEventListeners();
+            plugin.detach();
         }
 
+        this._removeTargetEvents();
+
         this._target = null;
+        this._activeActions = null;
 
         this._bindedOnBlur = null;
         this._bindedOnFocus = null;
+
+        this._bindedOnActionActivated = null;
+        this._bindedOnActionDeactivated = null;
+    }
+
+    _createActionEvents(){
+        this._bindedOnActionActivated = this._onActionActivated.bind(this);
+        this._bindedOnActionDeactivated = this._onActionDeactivated.bind(this);
+    }
+
+    _onActionActivated(e){
+        this._activeActions.set(e.detail.actionName, true);
+    }
+
+    _onActionDeactivated(e){
+        this._activeActions.set(e.detail.actionName, false);
+    }
+
+
+    _addTargetEvents(){
+        this._bindedOnFocus = this._onFocus.bind(this);
+        this._bindedOnBlur = this._onBlur.bind(this);
+
+        this._target.addEventListener("focus", this._bindedOnFocus);
+        this._target.addEventListener("blur", this._bindedOnBlur);
+
+        this._target.addEventListener(InputController.ACTION_ACTIVATED, this._bindedOnActionActivated);
+        this._target.addEventListener(InputController.ACTION_DEACTIVATED, this._bindedOnActionDeactivated);
+    }
+
+    _removeTargetEvents(){
+        this._target.removeEventListener("focus", this._bindedOnFocus);
+        this._target.removeEventListener("blur", this._bindedOnBlur);
+
+        this._target.removeEventListener(InputController.ACTION_ACTIVATED, this._bindedOnActionActivated);
+        this._target.removeEventListener(InputController.ACTION_DEACTIVATED, this._bindedOnActionDeactivated);
     }
 
     isActionActive(actionName) {
@@ -143,6 +168,10 @@ class InputController {
 
     _onBlur(e){
         this._focused = false;
+        this._activeActions.clear();
+        for (const plugin of this._plugins){
+            plugin.clearActiveActions();
+        }
     }
 
 

@@ -84,6 +84,11 @@ class InputPlugin{
     isKeyPressed(keyCode){
         return this._keys_active.get(keyCode);
     }
+
+    clearActiveActions(){
+        this._activeActions.clear();
+        this._keys_active.clear();
+    }
     
     _activateAction(actionName){
         if (!this._actions.get(actionName).enabled){
