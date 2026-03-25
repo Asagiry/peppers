@@ -11,13 +11,9 @@ const unbindJumpToSpaceBtn = document.getElementById("unbindJumpToSpace");
 
 const keyBoardPlugin = new KeyboardPlugin();
 const mousePlugin = new MousePlugin();
-const inputController = new InputController(
-    null,
-    null,
-    [keyBoardPlugin, mousePlugin]
-);
-keyBoardPlugin._inputController = inputController;
-mousePlugin._inputController = inputController;
+const inputController = new InputController();
+
+inputController.plugins = [keyBoardPlugin, mousePlugin];
 
 
 var canvas = document.getElementById("canvas");
@@ -101,7 +97,6 @@ function handleMovement(){
 
 function handleJump(){
     if (inputController.isActionActive("changeColor")){
-        console.log("changeColor");
         ctx.fillStyle = "blue";
     } else {
         ctx.fillStyle = "red";

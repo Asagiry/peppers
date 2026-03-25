@@ -1,37 +1,20 @@
 import {InputPlugin} from "./inputPlugin.js"
 
+/**
+ * Плагин для обработки событий клавиатуры вот ваще идеально выглядит чутка методов и все
+ */
 export class KeyboardPlugin extends InputPlugin{
 
-    bindActions(actionsToBind) {
-        for (const action of actionsToBind) {
-            let keys = [];
-
-            if (!action.keys) 
-                continue;
-
-            for (const key of action.keys){
-                keys.push(Number(key));
-            }
-
-            if (this._actions.has(action.name)){
-                keys.forEach(key => {
-                    if (!this._actions.get(action.name).keys.includes(key)){
-                        this._actions.get(action.name).keys.push(key)
-                    }
-                });
-
-                this._actions.get(action.name).enabled = action.enabled;
-                
-            } 
-
-            else {
-                this._actions.set(action.name, {name: action.name, keys: keys, enabled: action.enabled});
-            }
-        }
+    _getDeviceActionsNames(){
+        return "keys";
     }
 
-    _bindEvents(){
-        this._bindedEvents = {
+    _mapKey(key){
+        return Number(key);
+    }
+
+    _fillBindedEvents(){
+        return {
             keydown:  this._onKeyDown.bind(this),
             keyup : this._onKeyUp.bind(this)
         }
