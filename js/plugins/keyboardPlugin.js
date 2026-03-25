@@ -1,7 +1,7 @@
 import {InputPlugin} from "./inputPlugin.js"
 
 /**
- * Плагин для обработки событий клавиатуры вот ваще идеально выглядит чутка методов и все
+ * Плагин для обработки событий клавиатуры
  */
 export class KeyboardPlugin extends InputPlugin{
 
